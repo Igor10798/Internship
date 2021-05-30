@@ -86,24 +86,24 @@ noise_exc2 = nest.Create("poisson_generator", params={"rate": 80000.0})
 
 #populations
 excNeuronPop1 = nest.Create("exc_iaf_psc_alpha", 30) 
+inhNeuronPop = nest.Create("inh_iaf_psc_alpha", 15)
 
     #randomizing V_m
 vTh = -55
 vRest = -70
-randomizedInputs = [{"I_e": vRest+(vTh-vRest)*np.random.rand()} for x in excNeuronPop1]
-randomizedVms = [{"V_m": vRest+(vTh-vRest)*np.random.rand()} for x in excNeuronPop1]
+randomizedVs = [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 200*np.random.rand()} for x in excNeuronPop1]
+randomizedVs_inh = [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 200*np.random.rand()} for x in inhNeuronPop]
 
-nest.SetStatus(excNeuronPop1, randomizedVms)
-excNeuronPop2 = nest.Create("exc_iaf_psc_alpha", 30, params= randomizedVms)
-inhNeuronPop = nest.Create("inh_iaf_psc_alpha", 15)
-    #Even changin input of exc pops, I couldn't find any dinamics
+excNeuronPop2 = nest.Create("exc_iaf_psc_alpha", 30, params= randomizedVs)
+nest.SetStatus(excNeuronPop1, randomizedVs)
+nest.SetStatus(inhNeuronPop, randomizedVs_inh)
 
 #connections
 d = 1.0
 Je = 12.0
 Ji = -10.0
-conn_dict_ex_str = {"rule": "pairwise_bernoulli", "p": .3}
-conn_dict_ex_weak = {"rule": "pairwise_bernoulli", "p": .05}
+conn_dict_ex_str = {"rule": "pairwise_bernoulli", "p": .5}
+conn_dict_ex_weak = {"rule": "pairwise_bernoulli", "p": .4}
 conn_dict_in = {"rule": "pairwise_bernoulli", "p": .3}
 exc_syn_dic = {"delay": d, "weight": Je}
 inh_syn_dic = {"delay": d, "weight": Ji}
@@ -141,8 +141,9 @@ ts2 = dmm2["times"]
 plot2 = px.scatter(x=ts2, y=spikes2, labels={'x': 't', 'y': 'spikes 2'})
 plot2.show()
 
-dmm_inh = nest.GetStatus(spikeDet_inh, keys= "events")[0]
-spikes_inh = dmm_inh["senders"]
-ts_inh = dmm_inh["times"]
+dmmInh = nest.GetStatus(spikeDet_inh, keys= "events")[0]
+spikes_inh = dmmInh["senders"]
+ts_inh = dmmInh["times"]
+print(spikes_inh + ts_inh)
 plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes'})
 plot3.show()
