@@ -52,19 +52,19 @@ import plotly.express as px
 dmm1 = nest.GetStatus(spikeDet1, keys= "events")[0]
 spikes1 = dmm1['senders']
 ts1 = dmm1["times"]
-plot1 = px.scatter(x=ts1, y=spikes1, labels={'x': 't', 'y': 'spikes 1'})
-plot1.show()
+plot1 = px.scatter(x=ts1, y=spikes1, labels={'x': 't', 'y': 'spikes 1 -deterministic'})
+plot1.show() 
 
 dmm2 = nest.GetStatus(spikeDet2, keys= "events")[0]
 spikes2 = dmm2["senders"]
 ts2 = dmm2["times"]
-plot2 = px.scatter(x=ts2, y=spikes2, labels={'x': 't', 'y': 'spikes 2'})
+plot2 = px.scatter(x=ts2, y=spikes2, labels={'x': 't', 'y': 'spikes 2 -deterministic'})
 plot2.show()
 
 dmm_inh = nest.GetStatus(spikeDet_inh, keys= "events")[0]
 spikes_inh = dmm_inh["senders"]
 ts_inh = dmm_inh["times"]
-plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes'})
+plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes -deterministic'})
 plot3.show()
 
 """
@@ -150,19 +150,19 @@ import plotly.express as px
 dmm1 = nest.GetStatus(spikeDet1, keys= "events")[0]
 spikes1 = dmm1['senders']
 ts1 = dmm1["times"]
-plot1 = px.scatter(x=ts1, y=spikes1, labels={'x': 't', 'y': 'spikes 1'})
+plot1 = px.scatter(x=ts1, y=spikes1, labels={'x': 't', 'y': 'spikes 1 -aleatory'})
 plot1.show()
 
 dmm2 = nest.GetStatus(spikeDet2, keys= "events")[0]
 spikes2 = dmm2["senders"]
 ts2 = dmm2["times"]
-plot2 = px.scatter(x=ts2, y=spikes2, labels={'x': 't', 'y': 'spikes 2'})
+plot2 = px.scatter(x=ts2, y=spikes2, labels={'x': 't', 'y': 'spikes 2 -aleatory'})
 plot2.show()
 
 dmmInh = nest.GetStatus(spikeDet_inh, keys= "events")[0]
 spikes_inh = dmmInh["senders"]
 ts_inh = dmmInh["times"]
-plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes'})
+plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes -aleatory'})
 plot3.show()
 """
 
@@ -178,7 +178,7 @@ import numpy as np
 #setting params
 edict = { "tau_m": 20.0}
 nest.CopyModel("iaf_psc_alpha", "exc_iaf_psc_alpha", params=edict)
-nest.CopyModel("iaf_psc_alpha", "inh_iaf_psc_alpha")
+nest.CopyModel("iaf_psc_alpha", "inh_iaf_psc_alpha", params=edict)
 
 #inputs
 def createInputs(param):
@@ -259,17 +259,17 @@ import plotly.express as px
 dmm1 = nest.GetStatus(spikeDet1, keys= "events")[0]
 spikes1 = dmm1['senders']
 ts1 = dmm1["times"]
-plot1 = px.scatter(x=ts1, y=spikes1, labels={'x': 't', 'y': 'spikes 1'})
+plot1 = px.scatter(x=ts1, y=spikes1, labels={'x': 't', 'y': 'spikes 1 -plasticity'})
 plot1.show()
 
 dmm2 = nest.GetStatus(spikeDet2, keys= "events")[0]
 spikes2 = dmm2["senders"]
 ts2 = dmm2["times"]
-plot2 = px.scatter(x=ts2, y=spikes2, labels={'x': 't', 'y': 'spikes 2'})
+plot2 = px.scatter(x=ts2, y=spikes2, labels={'x': 't', 'y': 'spikes 2 -plasticity'})
 plot2.show()
 
 dmmInh = nest.GetStatus(spikeDet_inh, keys= "events")[0]
 spikes_inh = dmmInh["senders"]
 ts_inh = dmmInh["times"]
-plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes'})
+plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes -plasticity'})
 plot3.show()
