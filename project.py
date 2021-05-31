@@ -243,7 +243,7 @@ nest.Connect(inhNeuronPop, excNeuronPop2, conn_dict_in, syn_spec= syn_dict_in)
 #recordings && simulation
 def createDevice(n):
     return nest.Create("spike_detector", n, params={"withgid": True, "withtime": True})
-    c
+
 spikeDet1 = createDevice(30)
 spikeDet2 = createDevice(30)
 spikeDet_inh = createDevice(15)
