@@ -196,41 +196,54 @@ excNeuronPop1 = nest.Create("exc_iaf_psc_alpha", 30)
 inhNeuronPop = nest.Create("inh_iaf_psc_alpha", 15)
 
     #randomizing potentials
-def ranzomizePotentials(pop):
-    return [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 100+100*np.random.rand()} for x in pop]
+def ranzomizeParams(pop):
+    return [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 100+100*np.random.rand(), "tau_syn_in": 5.0} for x in pop]
 vTh = -55
 vRest = -70
-randomizedVs = ranzomizePotentials(excNeuronPop1)
-randomizedVs_inh = ranzomizePotentials(inhNeuronPop)
+randomizedVs = ranzomizeParams(excNeuronPop1)
+randomizedVs_inh = ranzomizeParams(inhNeuronPop)
 
 excNeuronPop2 = nest.Create("exc_iaf_psc_alpha", 30, params= randomizedVs)
 nest.SetStatus(excNeuronPop1, randomizedVs)
 nest.SetStatus(inhNeuronPop, randomizedVs_inh)
 
+#synapses
+alpha_min = .1
+alpha_max = 3.
+w_mean = 12.0
+w_dev = 3.0
+ratio = -5.0 #inh/exc weigth ratio
+
+syn_dict_ex =   {"model": "stdp_synapse",
+                "alpha": {"distribution": "uniform", "low": alpha_min, "high": alpha_max},
+                "weight": {"distribution": "normal", "mu": w_mean, "sigma": w_dev}
+                }
+print(nest.GetDefaults("stdp_synapse"))
+syn_dict_in =   {"model": "stdp_synapse",
+                "alpha": {"distribution": "uniform", "low": alpha_min, "high": alpha_max},
+                "weight": {"distribution": "normal", "mu": ratio*w_mean, "sigma": w_dev},
+                "Wmax": -100.0
+                }
+
 #connections
-d = 1.0
-Je = 14.0
-Ji = -20.0
 conn_dict_ex_str = {"rule": "pairwise_bernoulli", "p": .6}
 conn_dict_ex_weak = {"rule": "pairwise_bernoulli", "p": .4}
 conn_dict_in = {"rule": "pairwise_bernoulli", "p": .6}
-exc_syn_dic = {"delay": d, "weight": Je}
-inh_syn_dic = {"delay": d, "weight": Ji}
 
 nest.Connect(noise_exc1, excNeuronPop1, "all_to_all", syn_spec= input_syn_dict)
 nest.Connect(noise_exc2, excNeuronPop2, "all_to_all", syn_spec= input_syn_dict)
 nest.Connect(noise_exc1_late, excNeuronPop1, "all_to_all", syn_spec= input_syn_dict)
 nest.Connect(noise_exc2_late, excNeuronPop2, "all_to_all", syn_spec= input_syn_dict)
 
-nest.Connect(excNeuronPop1, inhNeuronPop, conn_dict_ex_str, syn_spec= exc_syn_dic)
-nest.Connect(excNeuronPop2, inhNeuronPop, conn_dict_ex_weak, syn_spec= exc_syn_dic)
-nest.Connect(inhNeuronPop, excNeuronPop1, conn_dict_in, syn_spec= inh_syn_dic)
-nest.Connect(inhNeuronPop, excNeuronPop2, conn_dict_in, syn_spec= inh_syn_dic)
+nest.Connect(excNeuronPop1, inhNeuronPop, conn_dict_ex_str, syn_spec= syn_dict_ex)
+nest.Connect(excNeuronPop2, inhNeuronPop, conn_dict_ex_weak, syn_spec= syn_dict_ex)
+nest.Connect(inhNeuronPop, excNeuronPop1, conn_dict_in, syn_spec= syn_dict_in)
+nest.Connect(inhNeuronPop, excNeuronPop2, conn_dict_in, syn_spec= syn_dict_in)
 
 #recordings && simulation
 def createDevice(n):
     return nest.Create("spike_detector", n, params={"withgid": True, "withtime": True})
-    
+    c
 spikeDet1 = createDevice(30)
 spikeDet2 = createDevice(30)
 spikeDet_inh = createDevice(15)
@@ -239,8 +252,7 @@ nest.Connect(excNeuronPop2, spikeDet2)
 nest.Connect(inhNeuronPop, spikeDet_inh)
 
 nest.Simulate(1000.0)
-print(nest.Models("synapses"))
-"""
+
 #plots
 import plotly.express as px
 
@@ -260,4 +272,4 @@ dmmInh = nest.GetStatus(spikeDet_inh, keys= "events")[0]
 spikes_inh = dmmInh["senders"]
 ts_inh = dmmInh["times"]
 plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes'})
-plot3.show()"""
+plot3.show()
