@@ -81,23 +81,27 @@ nest.CopyModel("iaf_psc_alpha", "exc_iaf_psc_alpha", params=edict)
 nest.CopyModel("iaf_psc_alpha", "inh_iaf_psc_alpha")
 
 #inputs
+def createInputs(param):
+    return nest.Create("poisson_generator", params= param)
 input_syn_dict = {"weight": 1.2}
-input_dict = {"rate": 80000.0, "stop": 500.0}
-noise_exc1 = nest.Create("poisson_generator", params= input_dict)
-noise_exc2 = nest.Create("poisson_generator", params= input_dict)
-later_input_dict = {"rate": 30000.0, "start": 500.0}
-noise_exc1_late = nest.Create("poisson_generator", params= later_input_dict)
-noise_exc2_late = nest.Create("poisson_generator", params= later_input_dict)
+input_dict = {"rate": 80000.0, "stop": 700.0}
+noise_exc1 = createInputs(input_dict)
+noise_exc2 = createInputs(input_dict)
+input_dict_late = {"rate": 30000.0, "start": 500.0}
+noise_exc1_late = createInputs(input_dict_late)
+noise_exc2_late = createInputs(input_dict_late)
 
 #populations
 excNeuronPop1 = nest.Create("exc_iaf_psc_alpha", 30) 
 inhNeuronPop = nest.Create("inh_iaf_psc_alpha", 15)
 
     #randomizing potentials
+def ranzomizePotentials(pop):
+    return [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 200*np.random.rand()} for x in pop]
 vTh = -55
 vRest = -70
-randomizedVs = [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 200*np.random.rand()} for x in excNeuronPop1]
-randomizedVs_inh = [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 200*np.random.rand()} for x in inhNeuronPop]
+randomizedVs = ranzomizePotentials(excNeuronPop1)
+randomizedVs_inh = ranzomizePotentials(inhNeuronPop)
 
 excNeuronPop2 = nest.Create("exc_iaf_psc_alpha", 30, params= randomizedVs)
 nest.SetStatus(excNeuronPop1, randomizedVs)
@@ -156,11 +160,10 @@ plot3.show()
 """
 
 """
-<===============================>
-<==== ALEATORY CONNECTIVITY ====>
-<===============================>
+<==========================>
+<==== PLASTIC SYNAPSES ====>
+<==========================>
 """
-
 
 import nest
 import numpy as np
@@ -171,23 +174,27 @@ nest.CopyModel("iaf_psc_alpha", "exc_iaf_psc_alpha", params=edict)
 nest.CopyModel("iaf_psc_alpha", "inh_iaf_psc_alpha")
 
 #inputs
+def createInputs(param):
+    return nest.Create("poisson_generator", params= param)
 input_syn_dict = {"weight": 1.2}
-input_dict = {"rate": 80000.0, "stop": 500.0}
-noise_exc1 = nest.Create("poisson_generator", params= input_dict)
-noise_exc2 = nest.Create("poisson_generator", params= input_dict)
-later_input_dict = {"rate": 30000.0, "start": 500.0}
-noise_exc1_late = nest.Create("poisson_generator", params= later_input_dict)
-noise_exc2_late = nest.Create("poisson_generator", params= later_input_dict)
+input_dict = {"rate": 80000.0, "stop": 700.0}
+noise_exc1 = createInputs(input_dict)
+noise_exc2 = createInputs(input_dict)
+input_dict_late = {"rate": 30000.0, "start": 500.0}
+noise_exc1_late = createInputs(input_dict_late)
+noise_exc2_late = createInputs(input_dict_late)
 
 #populations
 excNeuronPop1 = nest.Create("exc_iaf_psc_alpha", 30) 
 inhNeuronPop = nest.Create("inh_iaf_psc_alpha", 15)
 
     #randomizing potentials
+def ranzomizePotentials(pop):
+    return [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 200*np.random.rand()} for x in pop]
 vTh = -55
 vRest = -70
-randomizedVs = [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 200*np.random.rand()} for x in excNeuronPop1]
-randomizedVs_inh = [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 200*np.random.rand()} for x in inhNeuronPop]
+randomizedVs = ranzomizePotentials(excNeuronPop1)
+randomizedVs_inh = ranzomizePotentials(inhNeuronPop)
 
 excNeuronPop2 = nest.Create("exc_iaf_psc_alpha", 30, params= randomizedVs)
 nest.SetStatus(excNeuronPop1, randomizedVs)
