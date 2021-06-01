@@ -7,6 +7,7 @@ class StructuralPlasticityNet():
         self.inh_n = 200
         # Structural_plasticity properties
         self.update_interval = 1000
+        self.dt = .1
         # rate of background Poisson input
         self.bg_rate = 10000.0 #he used high frequency, should I change it?
 
@@ -47,8 +48,8 @@ class StructuralPlasticityNet():
         #model connectivity
         self.alpha_min = .1
         self.alpha_max = 3.
-        self.w_mean = 12.0
-        self.w_dev = 3.0
+        self.w_mean = 15.0
+        self.w_dev = 1.0
         self.ratio = -5.0 #inh/exc weigth ratio
         self.w_mean_in = self.ratio * self.w_mean
 
@@ -149,7 +150,7 @@ class StructuralPlasticityNet():
         if outcoming is not None:
             nest.Connect(self.nodes_i, outcoming, conn_dict_in, syn_spec= syn_dict_in)
 
-
+#building network
 incoming = StructuralPlasticityNet()
 incoming.connect_nodes()
 
@@ -157,4 +158,63 @@ outcoming = StructuralPlasticityNet()
 outcoming.connect_nodes()
 
 plastic = StructuralPlasticityNet()
-plastic.connect_nodes(incoming.nodes_e, outcoming.nodes_e)
+plastic.connect_nodes(incoming.nodes_e, outcoming.nodes_e) #THIS DOESN'T WORK => THEY PLOT THE SAME NETWORK
+
+#recording data && simulation
+def createDevice(n):
+    return nest.Create("spike_detector", n, params={"withgid": True, "withtime": True})
+
+spikeDet_incoming_ex = createDevice(incoming.exc_n)
+spikeDet_incoming_in = createDevice(incoming.inh_n)
+spikeDet_outcoming_ex = createDevice(outcoming.exc_n)
+spikeDet_outcoming_in = createDevice(outcoming.inh_n)
+spikeDet_plastic_ex = createDevice(plastic.exc_n)
+spikeDet_plastic_in = createDevice(plastic.inh_n)
+
+nest.Connect(incoming.nodes_e, spikeDet_incoming_ex)
+nest.Connect(incoming.nodes_i, spikeDet_incoming_in)
+nest.Connect(outcoming.nodes_e, spikeDet_outcoming_ex)
+nest.Connect(outcoming.nodes_i, spikeDet_outcoming_in)
+nest.Connect(plastic.nodes_e, spikeDet_plastic_ex)
+nest.Connect(plastic.nodes_i, spikeDet_plastic_in)
+
+nest.Simulate(1000.0)
+
+#plotting simulation
+import plotly.express as px
+
+dmm1 = nest.GetStatus(spikeDet_incoming_ex, keys= "events")[0]
+spikes1 = dmm1['senders']
+ts1 = dmm1["times"]
+plot1 = px.scatter(x=ts1, y=spikes1, labels={'x': 't', 'y': 'spikes neuron exc input pop'})
+plot1.show()
+
+dmm2 = nest.GetStatus(spikeDet_incoming_in, keys= "events")[0]
+spikes2 = dmm2['senders']
+ts2 = dmm2["times"]
+plot2 = px.scatter(x=ts2, y=spikes2, labels={'x': 't', 'y': 'spikes neuron inh input pop'})
+plot2.show()
+
+dmm3 = nest.GetStatus(spikeDet_outcoming_ex, keys= "events")[0]
+spikes3 = dmm3['senders']
+ts3 = dmm3["times"]
+plot3 = px.scatter(x=ts3, y=spikes3, labels={'x': 't', 'y': 'spikes neuron exc output pop'})
+plot3.show()
+
+dmm4 = nest.GetStatus(spikeDet_outcoming_in, keys= "events")[0]
+spikes4 = dmm4['senders']
+ts4 = dmm4["times"]
+plot4 = px.scatter(x=ts4, y=spikes4, labels={'x': 't', 'y': 'spikes neuron inh output pop'})
+plot4.show()
+
+dmm5 = nest.GetStatus(spikeDet_plastic_ex, keys= "events")[0]
+spikes5 = dmm5['senders']
+ts5 = dmm5["times"]
+plot5 = px.scatter(x=ts5, y=spikes5, labels={'x': 't', 'y': 'spikes neuron exc middle pop'})
+plot5.show()
+
+dmm6 = nest.GetStatus(spikeDet_plastic_in, keys= "events")[0]
+spikes6 = dmm6['senders']
+ts6 = dmm6["times"]
+plot6 = px.scatter(x=ts6, y=spikes6, labels={'x': 't', 'y': 'spikes neuron inh middle pop'})
+plot6.show()
