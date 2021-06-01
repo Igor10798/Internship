@@ -10,11 +10,9 @@ exc_syn_dic = {"weight": 20.0}
 inh_syn_dic = {"weight": -30.0}
 
 #inputs
-input_dict = {"weight": 25.0}
+input_dict = {"weight": 5.0}
 noise_exc1 = nest.Create("poisson_generator", params={"rate": 300.0})
 noise_exc2 = nest.Create("poisson_generator", params={"rate": 300.0})
-noise_2_exc1 = nest.Create("poisson_generator", params={"rate": 300.0})
-noise_2_exc2 = nest.Create("poisson_generator", params={"rate": 300.0})
 
 #populations
 excNeuronPop1 = nest.Create("exc_iaf_psc_alpha", 30) 
@@ -25,8 +23,6 @@ inhNeuronPop = nest.Create("inh_iaf_psc_alpha", 15)
 #connections
 nest.Connect(noise_exc1, excNeuronPop1, "all_to_all", syn_spec= input_dict)
 nest.Connect(noise_exc2, excNeuronPop2, "all_to_all", syn_spec= input_dict)
-nest.Connect(noise_2_exc1, excNeuronPop1, "all_to_all", syn_spec= input_dict)
-nest.Connect(noise_2_exc2, excNeuronPop2, "all_to_all", syn_spec= input_dict)
 
 nest.Connect(excNeuronPop1, inhNeuronPop, syn_spec= exc_syn_dic)
 nest.Connect(excNeuronPop2, inhNeuronPop, syn_spec= exc_syn_dic)
