@@ -11,7 +11,7 @@ class StructuralPlasticityNet():
         self.update_interval = 1000
         self.record_interval = 1000
         # rate of background Poisson input
-        self.bg_rate = 10000.0
+        self.bg_rate = 10000.0 #he used high frequency, should I change it?
 
         self.model_n = 'iaf_psc_exp'
 
@@ -48,6 +48,31 @@ class StructuralPlasticityNet():
         self.psc_e = 585.0
         self.psc_i = -585.0
         self.psc_ext = 6.2
+
+        #model connectivity
+        self.alpha_min = .1
+        self.alpha_max = 3.
+        self.w_mean = 12.0
+        self.w_dev = 3.0
+        self.ratio = -5.0 #inh/exc weigth ratio
+        self.w_mean_in = self.ratio * self.w_mean
+
+        self.syn_dict_ex = {
+            "model": "stdp_synapse",
+            "alpha": {"distribution": "uniform", "low": self.alpha_min, "high": self.alpha_max},
+            "weight": {"distribution": "normal", "mu": self.w_mean, "sigma": self.w_dev},
+            "Wmax": 100.0
+        }
+        self.syn_dict_in =   {
+            "model": "stdp_synapse",
+            "alpha": {"distribution": "uniform", "low": self.alpha_min, "high": self.alpha_max},
+            "weight": {"distribution": "normal", "mu": self.w_mean_in, "sigma": self.w_dev},
+            "Wmax": -100.0
+        }
+        
+        self.conn_dict_str = {"rule": "pairwise_bernoulli", "p": .6}
+        self.conn_dict_weak = {"rule": "pairwise_bernoulli", "p": .4}
+        self.conn_dict_in = {"rule": "pairwise_bernoulli", "p": .6}
     
     def prepare_simulation(self):
         #simulation functions
@@ -108,9 +133,28 @@ class StructuralPlasticityNet():
         nest.SetStatus(noise, {"rate": self.bg_rate})
         nest.Connect(noise, self.nodes_e, 'all_to_all', { 'weight': self.psc_ext, 'delay': 1.0 })
         nest.Connect(noise, self.nodes_i, 'all_to_all', { 'weight': self.psc_ext, 'delay': 1.0 })
+        
+    def connect_nodes(self, incoming= None, outcoming = None, conn_dict_ex = None, syn_dict_ex = None, conn_dict_in = None, syn_dict_in = None):
+        if conn_dict_ex is None:
+            conn_dict_ex = self.conn_dict_str
+        if syn_dict_ex is None:
+            syn_dict_ex = self.syn_dict_ex
+        if conn_dict_in is None:
+            conn_dict_in = self.conn_dict_in
+        if syn_dict_in is None:
+            syn_dict_in = self.syn_dict_in
+        if incoming is not None:
+            nest.Connect(incoming, self.nodes_e, conn_dict_ex, syn_spec= syn_dict_ex)
+        nest.Connect(self.nodes_e, self.nodes_i, self.conn_dict_weak, syn_spec= self.syn_dict_ex)
+        if outcoming is not None:
+            nest.Connect(self.nodes_i, outcoming, conn_dict_in, syn_spec= syn_dict_in)
 
+
+incoming = nest.Create("iaf_psc_alpha")
+outcoming = nest.Create("iaf_psc_alpha")
 
 example = StructuralPlasticityNet()
 example.prepare_simulation()
 example.create_nodes()
 example.connect_external_input()
+example.connect_nodes(incoming, outcoming)
