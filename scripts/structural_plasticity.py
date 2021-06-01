@@ -3,17 +3,12 @@ import nest
 class StructuralPlasticityNet():
 
     def __init__(self):
-        self.time = 200000.0   # simulation time
-        self.dt = .1 #resolution time update
         self.exc_n = 800
         self.inh_n = 200
         # Structural_plasticity properties
         self.update_interval = 1000
-        self.record_interval = 1000
         # rate of background Poisson input
         self.bg_rate = 10000.0 #he used high frequency, should I change it?
-
-        self.model_n = 'iaf_psc_exp'
 
         # Excitatory synaptic elements of Excitatory neurons && Inhibitory synaptic elements of Excitatory neurons
         self.g_rate = .0001
@@ -73,6 +68,11 @@ class StructuralPlasticityNet():
         self.conn_dict_str = {"rule": "pairwise_bernoulli", "p": .6}
         self.conn_dict_weak = {"rule": "pairwise_bernoulli", "p": .4}
         self.conn_dict_in = {"rule": "pairwise_bernoulli", "p": .6}
+
+        #initializing network
+        self.prepare_simulation()
+        self.create_nodes()
+        self.connect_external_input()
     
     def prepare_simulation(self):
         #simulation functions
@@ -150,11 +150,11 @@ class StructuralPlasticityNet():
             nest.Connect(self.nodes_i, outcoming, conn_dict_in, syn_spec= syn_dict_in)
 
 
-incoming = nest.Create("iaf_psc_alpha")
-outcoming = nest.Create("iaf_psc_alpha")
+incoming = StructuralPlasticityNet()
+incoming.connect_nodes()
 
-example = StructuralPlasticityNet()
-example.prepare_simulation()
-example.create_nodes()
-example.connect_external_input()
-example.connect_nodes(incoming, outcoming)
+outcoming = StructuralPlasticityNet()
+outcoming.connect_nodes()
+
+plastic = StructuralPlasticityNet()
+plastic.connect_nodes(incoming.nodes_e, outcoming.nodes_e)
