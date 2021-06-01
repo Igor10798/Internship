@@ -3,8 +3,10 @@
 <==== BASIC LEVEL ====>
 <=====================>
 """
-"""
+
 import nest
+
+nest.ResetKernel()
 
 #setting params
 edict = {"I_e": 200.0, "tau_m": 20.0}
@@ -67,13 +69,13 @@ ts_inh = dmm_inh["times"]
 plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes -deterministic'})
 plot3.show()
 
-"""
+
 """
 <===============================>
 <==== ALEATORY CONNECTIVITY ====>
 <===============================>
 """
-"""
+
 
 import nest
 import numpy as np
@@ -166,14 +168,14 @@ spikes_inh = dmmInh["senders"]
 ts_inh = dmmInh["times"]
 plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes -aleatory'})
 plot3.show()
-"""
+
 
 """
 <==========================>
 <==== PLASTIC SYNAPSES ====>
 <==========================>
 """
-"""
+
 
 import nest
 import numpy as np
@@ -280,7 +282,7 @@ spikes_inh = dmmInh["senders"]
 ts_inh = dmmInh["times"]
 plot3 = px.scatter(x=ts_inh, y=spikes_inh, labels={'x': 't', 'y': 'inh spikes -plasticity'})
 plot3.show()
-"""
+
 
 """
 <===========================================>
