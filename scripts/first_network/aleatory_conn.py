@@ -11,13 +11,16 @@ nest.CopyModel("iaf_psc_alpha", "inh_iaf_psc_alpha")
 #inputs
 def createInputs(param):
     return nest.Create("poisson_generator", params= param)
-input_syn_dict = {"weight": 1.5}
-input_dict = {"rate": 60000.0, "stop": 700.0}
+input_syn_dict = {"weight": 40.0}
+input_dict = {"rate": 300.0, "stop": 700.0}
 noise_exc1 = createInputs(input_dict)
 noise_exc2 = createInputs(input_dict)
-input_dict_late = {"rate": 40000.0, "start": 500.0}
+input_dict_late = {"rate": 300.0, "start": 500.0}
 noise_exc1_late = createInputs(input_dict_late)
 noise_exc2_late = createInputs(input_dict_late)
+input_dict_const = {"rate": 300.0, "start": 50.0}
+noise_exc1_const = createInputs(input_dict_const)
+noise_exc2_const = createInputs(input_dict_const)
 
 #populations
 excNeuronPop1 = nest.Create("exc_iaf_psc_alpha", 30) 
@@ -25,7 +28,7 @@ inhNeuronPop = nest.Create("inh_iaf_psc_alpha", 15)
 
     #randomizing potentials
 def ranzomizePotentials(pop):
-    return [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 100+100*np.random.rand()} for x in pop]
+    return [{"V_m": vRest+(vTh-vRest)*np.random.rand(), "I_e": 120+90*np.random.rand()} for x in pop]
 vTh = -55
 vRest = -70
 randomizedVs = ranzomizePotentials(excNeuronPop1)
@@ -37,7 +40,7 @@ nest.SetStatus(inhNeuronPop, randomizedVs_inh)
 
 #connections
 d = 1.0
-Je = 14.0
+Je = 18.0
 Ji = -20.0
 conn_dict_ex_str = {"rule": "pairwise_bernoulli", "p": .6}
 conn_dict_ex_weak = {"rule": "pairwise_bernoulli", "p": .4}
@@ -49,6 +52,8 @@ nest.Connect(noise_exc1, excNeuronPop1, "all_to_all", syn_spec= input_syn_dict)
 nest.Connect(noise_exc2, excNeuronPop2, "all_to_all", syn_spec= input_syn_dict)
 nest.Connect(noise_exc1_late, excNeuronPop1, "all_to_all", syn_spec= input_syn_dict)
 nest.Connect(noise_exc2_late, excNeuronPop2, "all_to_all", syn_spec= input_syn_dict)
+nest.Connect(noise_exc1_const, excNeuronPop1, "all_to_all", syn_spec= input_syn_dict)
+nest.Connect(noise_exc2_const, excNeuronPop2, "all_to_all", syn_spec= input_syn_dict)
 
 nest.Connect(excNeuronPop1, inhNeuronPop, conn_dict_ex_str, syn_spec= exc_syn_dic)
 nest.Connect(excNeuronPop2, inhNeuronPop, conn_dict_ex_weak, syn_spec= exc_syn_dic)

@@ -11,11 +11,11 @@ nest.CopyModel("iaf_psc_alpha", "inh_iaf_psc_alpha", params=edict)
 #inputs
 def createInputs(param):
     return nest.Create("poisson_generator", params= param)
-input_syn_dict = {"weight": 1.5}
-input_dict = {"rate": 60000.0, "stop": 700.0}
+input_syn_dict = {"weight": 5.0}
+input_dict = {"rate": 300.0, "stop": 700.0}
 noise_exc1 = createInputs(input_dict)
 noise_exc2 = createInputs(input_dict)
-input_dict_late = {"rate": 40000.0, "start": 500.0}
+input_dict_late = {"rate": 100.0, "start": 500.0}
 noise_exc1_late = createInputs(input_dict_late)
 noise_exc2_late = createInputs(input_dict_late)
 
