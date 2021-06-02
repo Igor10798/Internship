@@ -24,5 +24,7 @@ I differentiated the inputs during the simulation because in this way I could se
 ### 31/05/2021 - structural_plasticity.py
 I looked at a structural plasticity network (https://www.nest-simulator.org/py_sample/structural_plasticity/) and I want to use that class with some modifications in order to build a small network where structural plasticity is enabled. <br>
 I looked in the docs the functions I did not know and I used the chance to look at the functions related to the simulation in the docs (https://nest-simulator.readthedocs.io/en/nest-2.20.1/ref_material/pynest_apis.html?highlight=resetkernel#module-nest.lib.hl_api_simulation), implementing them in the first_project.py file in order to run multiple simulations.
+
+I added a function to the class that should let you to add connection and insert that plastic network in a bigger one.
 ###### Comments
 I could not find in the docs the property "synaptic_elements" for the "iaf_psc_alpha" object, so I could not understand how it works... Maybe I can add new properties to neurons (?)
