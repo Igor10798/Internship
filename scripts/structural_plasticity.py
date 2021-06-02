@@ -1,15 +1,26 @@
 import nest
+import numpy as np
 
 class StructuralPlasticityNet():
 
     def __init__(self):
-        self.exc_n = 800
-        self.inh_n = 200
+        #randomizing stuff
+        self.msd = None
+        self.N_vp = None
+        self.pyrngs = None
+        self.grng_seed = None
+        self.node_info_e = None
+        self.node_info_i = None
+        self.local_nodes_e = None
+        self.local_nodes_i = None
+        #number of neurons
+        self.exc_n = 100
+        self.inh_n = 30
         # Structural_plasticity properties
         self.update_interval = 1000
         self.dt = .1
         # rate of background Poisson input
-        self.bg_rate = 10000.0 #he used high frequency, should I change it?
+        self.bg_rate = 300.0
 
         # Excitatory synaptic elements of Excitatory neurons && Inhibitory synaptic elements of Excitatory neurons
         self.g_rate = .0001
@@ -30,7 +41,7 @@ class StructuralPlasticityNet():
             'E_L': -65.0,  # resting membrane potential (mV)
             'V_th': -50.0,  # spike threshold (mV)
             'C_m': 250.0,  # membrane capacitance (pF)
-            'V_reset': -65.0  # reset potential (mV)
+            'V_reset': -65.0,  # reset potential (mV)
         }
 
         self.nodes_e = None
@@ -43,14 +54,14 @@ class StructuralPlasticityNet():
         self.psc_d = 1.0
         self.psc_e = 585.0
         self.psc_i = -585.0
-        self.psc_ext = 6.2
+        self.psc_ext = 100.0
 
         #model connectivity
         self.alpha_min = .1
         self.alpha_max = 3.
         self.w_mean = 15.0
         self.w_dev = 1.0
-        self.ratio = -5.0 #inh/exc weigth ratio
+        self.ratio = -2.0 #inh/exc weigth ratio
         self.w_mean_in = self.ratio * self.w_mean
 
         self.syn_dict_ex = {
@@ -66,9 +77,9 @@ class StructuralPlasticityNet():
             "Wmax": -100.0
         }
         
-        self.conn_dict_str = {"rule": "pairwise_bernoulli", "p": .6}
-        self.conn_dict_weak = {"rule": "pairwise_bernoulli", "p": .4}
-        self.conn_dict_in = {"rule": "pairwise_bernoulli", "p": .6}
+        self.conn_dict_str = {"rule": "pairwise_bernoulli", "p": .4}
+        self.conn_dict_weak = {"rule": "pairwise_bernoulli", "p": .1}
+        self.conn_dict_in = {"rule": "pairwise_bernoulli", "p": .25}
 
         #initializing network
         self.prepare_simulation()
@@ -79,8 +90,15 @@ class StructuralPlasticityNet():
         #simulation functions
         nest.ResetKernel()
         nest.set_verbosity('M_ERROR')
-        nest.SetKernelStatus({ 'resolution': self.dt })
+        nest.SetKernelStatus({ 'resolution': self.dt})
         nest.SetStructuralPlasticityStatus({ 'structural_plasticity_update_interval': self.update_interval })
+
+        #RNG
+        self.msd = 666
+        self.N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
+        self.grng_seed =self.msd+self.N_vp
+        self.pyrngs = [np.random.RandomState(s) for s in range(self.msd, self.grng_seed)]
+        nest.SetKernelStatus({ 'grng_seed' : self.grng_seed, 'rng_seeds' : range(self.grng_seed + 1, self.msd + 2*self.N_vp + 1) })
 
         #creating personalized models
         nest.CopyModel('static_synapse', 'synapse_ex')
@@ -128,6 +146,16 @@ class StructuralPlasticityNet():
         self.nodes_i = nest.Create('iaf_psc_alpha', self.inh_n, { 'synaptic_elements': synaptic_elements_i })
         nest.SetStatus(self.nodes_e, 'synaptic_elements', synaptic_elements)
         nest.SetStatus(self.nodes_i, 'synaptic_elements', synaptic_elements_i)
+        #membrane randomization
+        self.node_info_e   = nest.GetStatus(self.nodes_e)
+        self.local_nodes_e = [(ni['global_id'], ni['vp']) for ni in self.node_info_e if ni['local']]
+        for gid,vp in self.local_nodes_e:
+            nest.SetStatus([gid], {'V_m': self.pyrngs[vp].uniform(-80.0, -55.0)})
+        self.node_info_i   = nest.GetStatus(self.nodes_i)
+        self.local_nodes_i = [(ni['global_id'], ni['vp']) for ni in self.node_info_i if ni['local']]
+        for gid,vp in self.local_nodes_i:
+            nest.SetStatus([gid], {'V_m': self.pyrngs[vp].uniform(-90.0, -65.0)})
+
 
     def connect_external_input(self):
         noise = nest.Create('poisson_generator')
@@ -135,7 +163,8 @@ class StructuralPlasticityNet():
         nest.Connect(noise, self.nodes_e, 'all_to_all', { 'weight': self.psc_ext, 'delay': 1.0 })
         nest.Connect(noise, self.nodes_i, 'all_to_all', { 'weight': self.psc_ext, 'delay': 1.0 })
         
-    def connect_nodes(self, incoming= None, outcoming = None, conn_dict_ex = None, syn_dict_ex = None, conn_dict_in = None, syn_dict_in = None):
+    def connect_nodes(self, incoming= None, outcoming = None, ex_to_in_conn = True, conn_dict_ex = None, syn_dict_ex = None, conn_dict_in = None, syn_dict_in = None):
+        #optional parameters
         if conn_dict_ex is None:
             conn_dict_ex = self.conn_dict_str
         if syn_dict_ex is None:
@@ -144,9 +173,15 @@ class StructuralPlasticityNet():
             conn_dict_in = self.conn_dict_in
         if syn_dict_in is None:
             syn_dict_in = self.syn_dict_in
+        #optional incoming external connection
         if incoming is not None:
             nest.Connect(incoming, self.nodes_e, conn_dict_ex, syn_spec= syn_dict_ex)
-        nest.Connect(self.nodes_e, self.nodes_i, self.conn_dict_weak, syn_spec= self.syn_dict_ex)
+        #direction of connection inside the network
+        if ex_to_in_conn:
+            nest.Connect(self.nodes_e, self.nodes_i, self.conn_dict_weak, syn_spec= self.syn_dict_ex)
+        else:
+            nest.Connect( self.nodes_i, self.nodes_e, self.conn_dict_in, syn_spec= self.syn_dict_in) #bah
+        #optional outcoming external connection
         if outcoming is not None:
             nest.Connect(self.nodes_i, outcoming, conn_dict_in, syn_spec= syn_dict_in)
 
@@ -158,7 +193,7 @@ outcoming = StructuralPlasticityNet()
 outcoming.connect_nodes()
 
 plastic = StructuralPlasticityNet()
-plastic.connect_nodes(incoming.nodes_e, outcoming.nodes_e) #THIS DOESN'T WORK => THEY PLOT THE SAME NETWORK
+plastic.connect_nodes(incoming.nodes_e, outcoming.nodes_e, True) #CONNECTIVITY DOESN'T WORK => THEY PLOT THE SAME NETWORK
 
 #recording data && simulation
 def createDevice(n):
@@ -178,7 +213,7 @@ nest.Connect(outcoming.nodes_i, spikeDet_outcoming_in)
 nest.Connect(plastic.nodes_e, spikeDet_plastic_ex)
 nest.Connect(plastic.nodes_i, spikeDet_plastic_in)
 
-nest.Simulate(1000.0)
+nest.Simulate(5000.0)
 
 #plotting simulation
 import plotly.express as px
