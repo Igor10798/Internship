@@ -94,7 +94,7 @@ class StructuralPlasticityNet():
         nest.SetStructuralPlasticityStatus({ 'structural_plasticity_update_interval': self.update_interval })
 
         #RNG
-        self.msd = 666
+        self.msd = 666 #six, six six, the number of the beast
         self.N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
         self.grng_seed =self.msd+self.N_vp
         self.pyrngs = [np.random.RandomState(s) for s in range(self.msd, self.grng_seed)]
@@ -186,6 +186,79 @@ class StructuralPlasticityNet():
             nest.Connect(self.nodes_i, outcoming, conn_dict_in, syn_spec= syn_dict_in)
 
 #building network
+outcoming = nest.Create("iaf_psc_alpha", 15, params={"I_e": 350.0})
+separated_pop = nest.Create("iaf_psc_alpha", 15, params={"I_e": 350.0})
+
+incoming = StructuralPlasticityNet()
+incoming.connect_nodes()
+
+plastic = StructuralPlasticityNet()
+plastic.connect_nodes(incoming.nodes_e, outcoming)
+
+#recording data && simulation
+def createDevice(n):
+    return nest.Create("spike_detector", n, params={"withgid": True, "withtime": True})
+
+spikeDet_outcoming = createDevice(15)
+spikeDet_separated_pop = createDevice(15)
+spikeDet_incoming_ex = createDevice(incoming.exc_n)
+spikeDet_incoming_in = createDevice(incoming.inh_n)
+spikeDet_plastic_ex = createDevice(plastic.exc_n)
+spikeDet_plastic_in = createDevice(plastic.inh_n)
+
+nest.Connect(outcoming, spikeDet_outcoming)
+nest.Connect(separated_pop, spikeDet_separated_pop)
+nest.Connect(incoming.nodes_e, spikeDet_incoming_ex)
+nest.Connect(incoming.nodes_i, spikeDet_incoming_in)
+nest.Connect(plastic.nodes_e, spikeDet_plastic_ex)
+nest.Connect(plastic.nodes_i, spikeDet_plastic_in)
+
+nest.Simulate(5000.0)
+
+#plotting simulation
+import plotly.express as px
+
+dmm1 = nest.GetStatus(spikeDet_outcoming, keys= "events")[0]
+spikes1 = dmm1['senders']
+ts1 = dmm1["times"]
+plot1 = px.scatter(x=ts1, y=spikes1, labels={'x': 't', 'y': 'spikes outcoming pop'})
+plot1.show()
+
+dmm2 = nest.GetStatus(spikeDet_separated_pop, keys= "events")[0]
+spikes2 = dmm2['senders']
+ts2 = dmm2["times"]
+plot2 = px.scatter(x=ts2, y=spikes2, labels={'x': 't', 'y': 'spikes separated pop (control outcoming)'})
+plot2.show()
+
+dmm3 = nest.GetStatus(spikeDet_incoming_ex, keys= "events")[0]
+spikes3 = dmm3['senders']
+ts3 = dmm3["times"]
+plot3 = px.scatter(x=ts3, y=spikes3, labels={'x': 't', 'y': 'spikes neuron exc input pop'})
+plot3.show()
+
+dmm4 = nest.GetStatus(spikeDet_incoming_in, keys= "events")[0]
+spikes4 = dmm4['senders']
+ts4 = dmm4["times"]
+plot4 = px.scatter(x=ts4, y=spikes4, labels={'x': 't', 'y': 'spikes neuron inh input pop'})
+plot4.show()
+
+dmm5 = nest.GetStatus(spikeDet_plastic_ex, keys= "events")[0]
+spikes5 = dmm5['senders']
+ts5 = dmm5["times"]
+plot5 = px.scatter(x=ts5, y=spikes5, labels={'x': 't', 'y': 'spikes neuron exc middle pop'})
+plot5.show()
+
+dmm6 = nest.GetStatus(spikeDet_plastic_in, keys= "events")[0]
+spikes6 = dmm6['senders']
+ts6 = dmm6["times"]
+plot6 = px.scatter(x=ts6, y=spikes6, labels={'x': 't', 'y': 'spikes neuron inh middle pop'})
+plot6.show()
+
+################
+#THIS DOESN'T WORK ==> if i call the class several times and connect the different networks they plot the same spyke pattern
+# ==> maybe I cannot call neurons from the class
+"""
+#building network
 incoming = StructuralPlasticityNet()
 incoming.connect_nodes()
 
@@ -253,3 +326,4 @@ spikes6 = dmm6['senders']
 ts6 = dmm6["times"]
 plot6 = px.scatter(x=ts6, y=spikes6, labels={'x': 't', 'y': 'spikes neuron inh middle pop'})
 plot6.show()
+"""
