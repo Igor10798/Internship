@@ -10,7 +10,7 @@ if not os.path.exists(root):
 os. chdir(root)
 
 def create(param= None):
-    return nest.Create("basket_cell", params= param)
+    return nest.Create("leaky_i_f", params= param)
 
 #setting parameter
 time = 1000.0
@@ -20,23 +20,16 @@ frequencies = []
 params = {
     "t_ref": 1.59,
     "C_m": 14.6,
-    "V_th": -53.0,
-    "V_reset": -78.0,
-    "E_L": -68.0,  
-    "I_e": 24.05,
+    "E_L": -65.0,
     "tau_syn_ex": 0.64,
-    "tau_syn_in": 2.0,
-    "g_L": 1.6
-}
-
-syn_params = {
+    "tau_syn_in": 2.0
 }
 
 for trial in trials:
     nest.ResetKernel()
     #creating neuron
-    nest.CopyModel("iaf_cond_alpha", "basket_cell", params=params)
-    neuron = create({"I_e": .0, "g_L": 1.4})
+    nest.CopyModel("amat2_psc_exp", "leaky_i_f", params=params)
+    neuron = create()
     #input
     input_current = nest.Create("poisson_generator", params={"rate": float(trial)})
     nest.Connect(input_current, neuron)
