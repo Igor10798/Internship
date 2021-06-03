@@ -49,7 +49,7 @@ for trial in trials:
     #collecting spykes/s (here total number)
     ni = len(nest.GetStatus(spikeDet, keys="events")[0]["senders"])
     #frequency
-    ni = ni / (time * 1000)
+    ni = ni / (time / 1000)
     frequencies.append(ni)
 #plot
 plot2 = px.scatter(x=trials, y=frequencies, labels={'x': 'frequency input', 'y': 'Spikes per second'})
