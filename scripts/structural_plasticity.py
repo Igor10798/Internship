@@ -173,17 +173,23 @@ class StructuralPlasticityNet():
             conn_dict_in = self.conn_dict_in
         if syn_dict_in is None:
             syn_dict_in = self.syn_dict_in
+
         #optional incoming external connection
         if incoming is not None:
             nest.Connect(incoming, self.nodes_e, conn_dict_ex, syn_spec= syn_dict_ex)
+
         #direction of connection inside the network
         if ex_to_in_conn:
             nest.Connect(self.nodes_e, self.nodes_i, self.conn_dict_weak, syn_spec= self.syn_dict_ex)
+            #optional outcoming external connection
+            if outcoming is not None:
+                nest.Connect(self.nodes_i, outcoming, conn_dict_in, syn_spec= syn_dict_in)
         else:
-            nest.Connect( self.nodes_i, self.nodes_e, self.conn_dict_in, syn_spec= self.syn_dict_in) #bah
-        #optional outcoming external connection
-        if outcoming is not None:
-            nest.Connect(self.nodes_i, outcoming, conn_dict_in, syn_spec= syn_dict_in)
+            nest.Connect( self.nodes_i, self.nodes_e, self.conn_dict_in, syn_spec= self.syn_dict_in)
+            #optional outcoming external connection
+            if outcoming is not None:
+                nest.Connect(self.nodes_i, outcoming, conn_dict_in, syn_spec= syn_dict_in)
+
 
 #building network
 outcoming = nest.Create("iaf_psc_alpha", 15, params={"I_e": 350.0})
@@ -256,7 +262,7 @@ plot6.show()
 
 ################
 #THIS DOESN'T WORK ==> if i call the class several times and connect the different networks they plot the same spyke pattern
-# ==> maybe I cannot call neurons from the class
+# ==> maybe I cannot call neurons as a class property
 """
 #building network
 incoming = StructuralPlasticityNet()
