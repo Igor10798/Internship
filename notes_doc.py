@@ -14,8 +14,7 @@ nest.GetStatus(neuron, "recordables") #check variables that can be recorded
 nest.SetStatus(multimeter, {"withtime": True, "record_from":["V_m"]})   #withtime records the points in time at which it samples the membrane voltage
 #SetStatus() is less efficient than params in Create()                                                                        #record_from expects a list of the names of the variables we would like to record
 
-spikeDet = nest.Create("spike_detector", #device that record spikes. Params is equivalent to setStatus
-            params={"withgid": True, "withtime": True}) #withgid indicates whether the spike detector is to record the source id from which it received the event
+spikeDet = nest.Create("spike_detector", params={"withgid": True, "withtime": True}) #withgid indicates whether the spike detector is to record the source id from which it received the event
 
 nest.Connect(multimeter, neuron) #connecting different nodes
 nest.Connect(neuron, spikeDet) # <==ORDER MATTERS==>multimeter asks for membrane potential to neuron, and when neuron spikes, it sends the event to de detector
