@@ -29,3 +29,10 @@ I added a function to the class that should let you to add connection and insert
 I read about RNG (https://nest-simulator.readthedocs.io/en/v2.18.0/guides/random_numbers.html?highlight=randomize) and how to properly randomize value, and I tried it with V_m.
 ###### Comments
 I could not find in the docs the property "synaptic_elements" for the "iaf_psc_alpha" object, so I could not understand how it works... Maybe I can add new properties to neurons (?)
+
+### 31/05/2021 - single_point.py
+I studied the response of an integrate and fire neuron to an input varying in frequency. <br>
+I then repeated the procedure to see how a leaky integrate and fire neuron would response, and I tried to vary the stimulus for amplitude and frequency.
+
+###### Comments
+I do not understand why my neuron reacted in a so different way if a vary the frequency of the input and the `E_L` property is setted as `-65.0` rather than `-65.3` (Vm is reported in the file name of the plots)
