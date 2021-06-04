@@ -35,4 +35,9 @@ I studied the response of an integrate and fire neuron to an input varying in fr
 I then repeated the procedure to see how a leaky integrate and fire neuron would response, and I tried to vary the stimulus for amplitude and frequency.
 
 ###### Comments
-I do not understand why my neuron reacted in a so different way if a vary the frequency of the input and the `E_L` property is setted as `-65.0` rather than `-65.3` (Vm is reported in the file name of the plots)
+I do not understand why my neuron reacted in a so different way if a vary the frequency of the input and the `E_L` property is setted as `-65.0` rather than `-65.3` (Vm is reported in the file name of the plots)  
+**Updates**  
+In order to investigate this problem I added a while loop and I run the simulations for `E_L` values varying from `-66.0` to `-64.0`. I found that the pattern I saw belongs to a bigger pattern of behavior of leaky integrate and fire neuron: I suppose that with too high `E_L` their behavior becomes more and more similar to an integrate and fire neuron (a sort of proto-linear relationship between spyke/second and frequency of the input), while if `E_L` is too low the neuron doesn't spyke.  
+It seems that the hyperbolic graph is at a middle point between 2 linear graphs, where this curve is flatted (horizontaly if neuron doesn't spyke, inclined if for high `E_L` values).
+
+I propose that the best `E_L` value in this model is `-65.4 mV`. Here the rheobase frequency is of about 400Hz.
