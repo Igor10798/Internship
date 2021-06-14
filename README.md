@@ -41,3 +41,6 @@ In order to investigate this problem I added a while loop and I run the simulati
 It seems that the hyperbolic graph is at a middle point between 2 linear graphs, where this curve is flatted (horizontaly if neuron doesn't spyke, inclined if for high `E_L` values).
 
 I propose that the best `E_L` value in this model is `-65.4 mV`. Here the rheobase frequency is of about 400Hz.
+
+###  14/06/2021 stats.py
+After the work in the lab, where I learnt how to plot linear regression, I try to cut the "zero values" (link) from the plot where the R^2 index was low to see if the linear relationship explained. I saw the R^2 value was .9.
