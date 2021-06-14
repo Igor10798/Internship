@@ -3,6 +3,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 import os
+import scipy
+from scipy.stats import linregress
 
 #setting working directory path
 root= r"C:\\Users\\Utente\\GIT\\internship\\images"
@@ -90,6 +92,12 @@ print(freqs_350)
 print(freqs_500)
 print(freqs_750)
 print(freqs_1000)
+
+regr_leak_con = scipy.stats.linregress(g_Ls, rheobase_freqs)
+regr_350 = scipy.stats.linregress(g_Ls, freqs_350)
+regr_500 = scipy.stats.linregress(g_Ls, freqs_500)
+regr_750 = scipy.stats.linregress(g_Ls, freqs_750)
+regr_1000 = scipy.stats.linregress(g_Ls, freqs_1000)
     
 #setting plots
 plot1 = px.scatter(x= g_Ls, y= rheobase_freqs, labels={'x': 'Leak conductance', 'y': 'Rheobase frequency'})
@@ -100,10 +108,10 @@ addTrace(freqs_750, "750Hz", "rgba(2, 35, 250, .5)")
 addTrace(freqs_1000, "1000Hz", "rgba(255, 16, 0, .5)")
 
 #plotting
-plot1.show()
-plot2.show()
+#plot1.show()
+#plot2.show()
 
 
 #save imgs
-plot1.write_image("rheobase_freq.png")
-plot2.write_image("spike_s_freqs.png")
+#plot1.write_image("rheobase_freq.png")
+#plot2.write_image("spike_s_freqs.png")
