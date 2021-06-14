@@ -43,4 +43,4 @@ It seems that the hyperbolic graph is at a middle point between 2 linear graphs,
 I propose that the best `E_L` value in this model is `-65.4 mV`. Here the rheobase frequency is of about 400Hz.
 
 ###  14/06/2021 stats.py
-After the work in the lab, where I learnt how to plot linear regression, I try to cut the "zero values" (link) from the plot where the R^2 index was low to see if the linear relationship explained. I saw the R^2 value was .9.
+After the work in the lab, where I learnt how to plot linear regression, I try to cut the "zero values" (https://github.com/Igor10798/Internship/blob/7057349e4946615abed763c4e6dbf7e429addf64/stats.py#L35-L43) from the plot where the R^2 index was low to see if the linear relationship explained. I saw the R^2 value was .9.
