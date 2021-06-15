@@ -94,8 +94,8 @@ plot_regression(plot3, "Spikes/s at 500Hz input", regr_500, g_Ls_500, freqs_500_
 plot_regression(plot4, "Spikes/s at 750Hz input", regr_750, g_Ls_750, freqs_750_nonzero, results_750)
 plot_regression(plot5, "Spikes/s at 1000Hz input", regr_1000, g_Ls_1000, freqs_1000_nonzero, results_1000)
 
-np.savetxt('rheobase.csv', (g_Ls_for_rheobase, rheobase_freqs))
-np.savetxt('input_350.csv', (g_Ls_350, freqs_350_nonzero))
-np.savetxt('input_500.csv', (g_Ls_500, freqs_500_nonzero))
-np.savetxt('input_750.csv', (g_Ls_750, freqs_750_nonzero))
-np.savetxt('input_1000.csv', (g_Ls_1000, freqs_1000_nonzero))
+np.savetxt('rheobase.csv', np.c_[g_Ls_for_rheobase, rheobase_freqs])
+np.savetxt('input_350.csv', np.c_[g_Ls_350, freqs_350_nonzero])
+np.savetxt('input_500.csv', np.c_[g_Ls_500, freqs_500_nonzero])
+np.savetxt('input_750.csv', np.c_[g_Ls_750, freqs_750_nonzero])
+np.savetxt('input_1000.csv', np.c_[g_Ls_1000, freqs_1000_nonzero])
