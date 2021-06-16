@@ -29,7 +29,6 @@ def create_network(dead_signal, constant_signal, exponential_signal, weight = 1.
     input_dict = {"rate": 300.0, "stop": scale_size}
     input_conn = {"rule": "fixed_total_number", "N": n_excited}
 
-    nest.ResetKernel()
     nest.CopyModel("aeif_cond_alpha", "leaky_i_f", params=params)
 
     #building network
