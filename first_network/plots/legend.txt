@@ -1,5 +1,0 @@
-noprop: I set weight = 1.0, `E_L`: -68.0
-prop: I set weight = 1.0, `E_L`: -66.0
-highprop: I set weight = 5.0, `E_L`: -66.0
-
-Simulation time: 10 seconds
