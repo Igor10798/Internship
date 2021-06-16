@@ -42,11 +42,12 @@ It seems that the hyperbolic graph is at a middle point between 2 linear graphs,
 
 I propose that the best `E_L` value in this model is `-65.4 mV`. Here the rheobase frequency is of about 400Hz.
 
-###  14/06/2021 stats.py
-After the work in the lab where I learnt how to plot linear regression, I tried to drop "zero values" (https://github.com/Igor10798/Internship/blob/7057349e4946615abed763c4e6dbf7e429addf64/stats.py#L35-L43) from the plot where the R^2 index was low to see if the linear relationship explained that pattern. Sincce the R^2 value was .9, I can conclude that there is a linear relationship between leak conductance and spike/s, and the input frequency is not a mediator of this relationship.
+###  14/06/2021 stats.py (https://github.com/Igor10798/Internship/blob/7057349e4946615abed763c4e6dbf7e429addf64/stats.py#L35-L43)
+After the work in the lab where I learnt how to plot linear regression, I tried to drop "zero values"  
+From the plot where the R^2 index was low to see if the linear relationship explained that pattern. Sincce the R^2 value was .9, I can conclude that there is a linear relationship between leak conductance and spike/s, and the input frequency is not a mediator of this relationship.
 
 Now I am going to plot data in csv format and analize them with JASP && Rstudio.
 
-### 16/06/2021 script.py (link)
+### 16/06/2021 script.py (https://github.com/Igor10798/Internship/blob/master/first_network/script.py)
 I am going to study the importance of weight magnitude and number of random connection between neurons in a single population of LIF neuron, how they influence the output of the network (spikes/s) and how their relationship.  
 I am going to compile a report with my findings and try to understand the nature of these relationships.
