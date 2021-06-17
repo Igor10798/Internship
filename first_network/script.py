@@ -39,7 +39,13 @@ def create_network(weight = 1.0, p = .003):
     nest.Connect(neuron_pop, spikeDet)
     return input_curr, neuron_pop, spikeDet
 
-def label_network(dead_signal, step_1, constant_signal, step_2, exponential_signal, step_3, spikeDet, weight):
+def label_network(spikeDet, p):
+    global step_1
+    global step_2
+    global step_3
+    global dead_signal
+    global constant_signal
+    global exponential_signal
     #recording vars
     var = nest.GetStatus(spikeDet, keys = "events")
     spikes = np.array(var[0]["senders"])
@@ -47,21 +53,20 @@ def label_network(dead_signal, step_1, constant_signal, step_2, exponential_sign
     t = np.array(var[0]["times"])
 
     mask_10s = (10 * one_sec) < t
-    mask_1s = (one_sec) < t
+    mask_1s = one_sec < t
     spikes_10s = spike_freq[mask_10s][0] if spike_freq[mask_10s].size != 0 else 0 #indexes of all spikes after 10s
     spikes_1s = spike_freq[mask_1s][0] if spike_freq[mask_1s].size != 0 else 0 #indexes of all spikes after 1s
     ratio = spikes_10s / spikes_1s if spikes_1s != 0 else 0
 
     if ratio == 0:
         dead_signal = np.append(dead_signal, np.sum(spike_freq))
-        step_1.append(weight)
+        step_1.append(p)
     elif ratio < 2.0 and ratio > 0:
         constant_signal = np.append(constant_signal, np.sum(spike_freq))
-        step_2.append(weight)
+        step_2.append(p)
     elif ratio >= 2.0:
         exponential_signal = np.append(exponential_signal, np.sum(spike_freq))
-        step_3.append(weight)
-    return dead_signal, step_1, constant_signal, step_2, exponential_signal, step_3
+        step_3.append(p)
 
 
 def plot_add(plot, x_val, y_val, color_graph, name_trace):
@@ -71,6 +76,7 @@ def plot_add(plot, x_val, y_val, color_graph, name_trace):
 one_sec = 1000.0
 time = 15.0 * one_sec
 w = 1.0
+p = .003
 #data to be exported
 dead_signal = np.array([]) #if the outcome doesn't propagate for 9 seconds after the initial pulse
 constant_signal = np.array([]) #if the outcome propagates for at least 9 seconds after the initial pulse
@@ -86,14 +92,18 @@ while w < 101.0:
     input_curr, neuron_pop, spikeDet = create_network(w)
     #simulating
     nest.Simulate(time)
-    dead_signal, step_1, constant_signal, step_2, exponential_signal, step_3 = label_network(dead_signal, step_1, constant_signal, step_2, exponential_signal, step_3, spikeDet, w)
+    label_network(spikeDet, w)
     weights.append(w)
     w += w
-
+# while p < .104:
+#     nest.ResetKernel()    
+#     input_curr, neuron_pop, spikeDet = create_network(w, p)
+#     simulating
+#     nest.Simulate(time)
+#     dead_signal, step_1, constant_signal, step_2, exponential_signal, step_3 = label_network(dead_signal, step_1, constant_signal, step_2, exponential_signal, step_3, spikeDet, p)
+#     p = .001 + p
 #plotting
-print(dead_signal)
-print(constant_signal)
-print(exponential_signal)
+
 pio.templates.default = "simple_white" # Sets the plotly default theme
 plot = px.scatter()
 # step_1 = []
@@ -111,4 +121,4 @@ plot_add(plot, step_2, constant_signal, "rgba(250, 220, 0, .8)", "constant signa
 plot_add(plot, step_3, exponential_signal, "rgba(255, 16, 0, .8)", "exploded signal")
 plot.update_layout(xaxis_title="Weight (pS)", yaxis_title= "Spikes frequency (Hz)")
 plot.show()
-plot.write_image("prova.png")
+plot.write_image("weight.png")
