@@ -90,31 +90,21 @@ step_3 = []
 while w < 101.0:
     nest.ResetKernel()    
     input_curr, neuron_pop, spikeDet = create_network(w)
-    #simulating
     nest.Simulate(time)
     label_network(spikeDet, w)
     weights.append(w)
     w += w
+    
 # while p < .104:
 #     nest.ResetKernel()    
 #     input_curr, neuron_pop, spikeDet = create_network(w, p)
-#     simulating
 #     nest.Simulate(time)
-#     dead_signal, step_1, constant_signal, step_2, exponential_signal, step_3 = label_network(dead_signal, step_1, constant_signal, step_2, exponential_signal, step_3, spikeDet, p)
+#     label_network(spikeDet, p)
 #     p = .001 + p
 #plotting
 
 pio.templates.default = "simple_white" # Sets the plotly default theme
 plot = px.scatter()
-# step_1 = []
-# for x in range(1, len(dead_signal)):
-#     step_1.append(x) #from 1 to dead signal lenght
-# step_2 = []
-# for x in range(len(dead_signal), len(dead_signal) + len(constant_signal)):
-#     step_2.append(x) #from dead signal lenght to constant signal lenght
-# step_3 = []
-# for x in range(len(dead_signal) + len(constant_signal), len(dead_signal) + len(constant_signal) + len(exponential_signal)):
-#     step_3.append(x) #from constant signal length to exponential signal lenght
 
 plot_add(plot, step_1, dead_signal, "rgba(38, 250, 1, .8)", "dead signal")
 plot_add(plot, step_2, constant_signal, "rgba(250, 220, 0, .8)", "constant signal")
