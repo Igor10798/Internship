@@ -1,0 +1,15 @@
+rheobase:
+	linear: .937, adjusted: .9362
+	logarithmic: .6957, adjusted: .692
+input_350:
+	linear: .9006, adjusted: .8985
+	logarithmic: .9169, adjusted: .9151
+input_500:
+	linear: .9474, adjusted: .9465
+	logarithmic: .8939, adjusted: .8922
+input_750:
+	linear: .9004, adjusted: .8992
+	logarithmic: .899, adjusted: .8977
+input_1000:
+	linear: .982, adjusted: .9818
+	logarithmic: .8307, adjusted: .8287
