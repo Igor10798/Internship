@@ -65,7 +65,7 @@ From this analysis we can conclude that there are not data to not consider in or
 I am going to investigate the importance of weight magnitude and number of random connection between neurons in a single population of LIF neuron, how they influence the output of the network (spikes/s) and how their relationship.  
 I am going to compile a report with my findings and try to understand the nature of these relationships.
 ###### 20/06/2021 recap of first findings
-From my code I got a step function looking at how outcome varies in function of probability of connection
+From my code I got a step function looking at how outcome varies in function of probability of connection  
   ![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/probability.png)  
 *Labels are wrong but it was just a test plot, because when weights vary I cannot see spikes for every weight I assign to the network.*  
 From this plot I may infer that there are cluster of probability that makes the network behave differently (e.g. `[0, .035]` && `(.035, 0.14]`). This remarks the importance to investigate how probability interacts with other network parameters: supposing an exponential mediation of probability in weights/output relationship, the lower part of a step may influence less the output, while the upper part may influence it more.  
@@ -75,3 +75,6 @@ As you can see from the image it only display output for `w = 2^x`. Trying to in
 Investigating further, I tried to plot the missing values (i.e. w belonging to [33, 63] && [65, 100]). The plots only show an output for the first value of the sets of w.  
 ![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/weight_33to63.png)  
 ![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/weight_65to100.png)  
+###### 21/06/2021 News
+Although I did some code refactoring, I couldn't find the error. While waiting, I added a function that gives to the neuron of the newtork the `STDP synapse model`, comparing the outputs from a non-plastic and from a plastic network for different weights.  
+Unexpectedly, these plots don't differ at all. Maybe setting fixed weights force static connections in the network (with the given strenght). I will try to vary the connectivity instead, to check if I obtain different results.
