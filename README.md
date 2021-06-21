@@ -57,24 +57,29 @@ From the Scale-Location plot, we can check if the homoscedasticity assumption is
 ![alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/rheobase/std%20residual-fitted.png)  
 From the residuals-leverage plot, we can search for high Leverage points and for outliers. We may define an outlier a data whose std residual is 3 standard far from the mean, while we may define a leverage as the distance of the X value of an observation from the others. The former are data that are not in line with other observation (to check if there are some problems with the model), the latter are data that have a greater effects on determining the regression. We have to be careful and check what data are outlier and what are high leverage points, and what are both (i.e. `influence ponts`).  
 From the graph below we can see that there are no outliers nor high leverage points, since all points are far away from the Cook distance.  
-![alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/rheobase/residual-leverage.png)  
+![alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/750Hz%20wls/scale-location.png)  
 
 From this analysis we can conclude that there are not data to not consider in order to enhanche the predictive power of the model, but the distribution doesn't meet some assumption of linear regression (i.e. homoscedasticity and linearity), so the model clearly cannot fit the data. Maybe the use of a GLM could explain better these data.
+
+###### 21/06/2021 Trying to fix heteroscedasticity
+I used `weighted least square regression` trying to fix heteroscedasticity while maintaining "simple" regression. Using weights (i.e. `lm(abs(model$residuals) ~ model$fitted.values)$fitted.values^2`) in order to make residuals more plain, I enhanced the coefficient of determination (from .8977 to .9378), and by using a non linear model (hence we previously found out that the linearity was missing) (i.e. `V1 ~ 1/V2 + log(V2)`) it becomes .962.  
+Despite the enhancement of R^2, from the Scale-Location plot we can still notice a pattern composed by residuals, and performing a `var.test` will confirm the heteroscedasticity.  
+[!alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/rheobase/residual-leverage.png))
 
 ### 16/06/2021 script.py (https://github.com/Igor10798/Internship/blob/master/first_network/script.py)
 I am going to investigate the importance of weight magnitude and number of random connection between neurons in a single population of LIF neuron, how they influence the output of the network (spikes/s) and how their relationship.  
 I am going to compile a report with my findings and try to understand the nature of these relationships.
 ###### 20/06/2021 recap of first findings
 From my code I got a step function looking at how outcome varies in function of probability of connection  
-  ![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/probability.png)  
+  ![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/params_variability/probability.png)  
 *Labels are wrong but it was just a test plot, because when weights vary I cannot see spikes for every weight I assign to the network.*  
 From this plot I may infer that there are cluster of probability that makes the network behave differently (e.g. `[0, .035]` && `(.035, 0.14]`). This remarks the importance to investigate how probability interacts with other network parameters: supposing an exponential mediation of probability in weights/output relationship, the lower part of a step may influence less the output, while the upper part may influence it more.  
 I plotted output in function of weights (w) variation (from 1 to 100).  
-![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/weight.png)  
+![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/params_variability/weight.png)  
 As you can see from the image it only display output for `w = 2^x`. Trying to investigate why this happens, I printed the total spikes recorded by the device, and it recorded spikes only for w values indicates above and plotted in the image. Since, using the same code probability was plotted for every value of p, I feel to exclude that how the loop was set causes this problem.  
 Investigating further, I tried to plot the missing values (i.e. w belonging to [33, 63] && [65, 100]). The plots only show an output for the first value of the sets of w.  
-![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/weight_33to63.png)  
-![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/weight_65to100.png)  
+![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/params_variability/weight_33to63.png)  
+![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/params_variability/weight_65to100.png)  
 ###### 21/06/2021 News
-Although I did some code refactoring, I couldn't find the error. While waiting, I added a function that gives to the neuron of the newtork the `STDP synapse model`, comparing the outputs from a non-plastic and from a plastic network for different weights.  
+Although I did some code refactoring, I couldn't find the error. While waiting, I added a function that gives to the neuron of the newtork the `STDP synapse model`, comparing the outputs from a non-plastic and from a plastic network for different weights. (https://github.com/Igor10798/Internship/tree/master/first_network/plasticity)  
 Unexpectedly, these plots don't differ at all. Maybe setting fixed weights force static connections in the network (with the given strenght). I will try to vary the connectivity instead, to check if I obtain different results.
