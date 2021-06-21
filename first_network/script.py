@@ -87,41 +87,31 @@ def label_network(spikeDet, var, dead_sig = None, step_one = None, const_sign = 
     if dead_sig is not None and step_one is not None and const_sign is not None and step_two is not None and exp_sign is not None and step_three is not None:    
         return step_1, step_2, step_3, dead_signal, constant_signal, exploded_signal
 
-def multiple_nets(w, probs_1 = None, probs_20 = None, probs_40 = None, probs_60 = None, probs_80 = None, probs_100 = None):
+def multiple_nets(w,  probabilities = None):
     #modifying global vars if customized are not inserted
-    if probs_1 is None and probs_20 is None and probs_40 is None and probs_60 is None and probs_80 is None and probs_100 is None:    
-        global probs_at_1
-        global probs_at_20
-        global probs_at_40
-        global probs_at_60
-        global probs_at_80
-        global probs_at_100
+    if probabilities is None:    
+        global probs
     else:
-        probs_at_1 = probs_1
-        probs_at_20 = probs_20
-        probs_at_40 = probs_40
-        probs_at_60 = probs_60
-        probs_at_80 = probs_80
-        probs_at_100 = probs_100
+        probabilities = probs
         
     spike_freq, t = record_vars(spikeDet) #getting output and associated time
 
     #inserting the output in the right array
     if w == 1:
-        probs_at_1.append(spike_freq)
+        probabilities.at_1.append(spike_freq)
     elif w == 20:
-        probs_at_20.append(spike_freq)
+        probabilities.at_20.append(spike_freq)
     elif w == 40:
-        probs_at_40.append(spike_freq)
+        probabilities.at_40.append(spike_freq)
     elif w == 60:
-        probs_at_60.append(spike_freq)
+        probabilities.at_60.append(spike_freq)
     elif w == 80:
-        probs_at_80.append(spike_freq)
+        probabilities.at_80.append(spike_freq)
     elif w == 100:
-        probs_at_100.append(spike_freq)
+        probabilities.at_100.append(spike_freq)
     #returning customized vars
-    if probs_1 is not None and probs_20 is not None and probs_40 is not None and probs_60 is not None and probs_80 is not None and probs_100 is not None:    
-        return probs_at_1, probs_at_20, probs_at_40, probs_at_60, probs_at_80, probs_at_100
+    if probs is not None:
+        return probabilities
 
 def compare_plasticity(spikeDet, spikeDet_plasticity, var):
     spike_freq, t = record_vars(spikeDet) #getting output and associated times
@@ -150,7 +140,7 @@ def compare_plasticity(spikeDet, spikeDet_plasticity, var):
 def plot_add(plot, x_val, y_val, color_graph, name_trace):
     plot.add_trace(go.Scatter(x= x_val, y= y_val, mode= "markers", marker=dict(color=color_graph), name= name_trace))
 
-def plot_variation_loop(step_1, dead_signal, step_2, constant_signal, step_3, exploded_signal, x_axis, file_name):
+def plot_variation_loop(step_1, dead_signal, step_2, constant_signal, step_3, exploded_signal, x_axis, file_name, path = "params_variability"):
     #preparing plot
     pio.templates.default = "simple_white"
     plot = px.scatter()
@@ -160,7 +150,22 @@ def plot_variation_loop(step_1, dead_signal, step_2, constant_signal, step_3, ex
     plot_add(plot, step_3, exploded_signal, "rgba(38, 250, 1, .8)", "exploded signal")
     plot.update_layout(xaxis_title= x_axis, yaxis_title= "Spikes frequency (Hz)")
     plot.show()
-    plot.write_image("{}.png".format(file_name, w))
+    plot.write_image("{}/{}.png".format(path, file_name))
+
+def plot_interaction(prob, probabilities, x_axis, file_name, path = "params_interaction"):
+    #preparing plot
+    pio.templates.default = "simple_white"
+    plot = px.scatter()
+
+    plot_add(plot, probabilities, prob.at_1, "rgba(255, 16, 0, .8)", "w = 1 (pS)")
+    plot_add(plot, probabilities, prob.at_20, "rgba(255, 16, 0, .8)", "w = 20 (pS)")
+    plot_add(plot, probabilities, prob.at_40, "rgba(255, 16, 0, .8)", "w = 40 (pS)")
+    plot_add(plot, probabilities, prob.at_60, "rgba(255, 16, 0, .8)", "w = 60 (pS)")
+    plot_add(plot, probabilities, prob.at_80, "rgba(255, 16, 0, .8)", "w = 80 (pS)")
+    plot_add(plot, probabilities, prob.at_100, "rgba(255, 16, 0, .8)", "w = 100 (pS)")
+    plot.update_layout(xaxis_title= x_axis, yaxis_title= "Spikes frequency (Hz)")
+    plot.show()
+    plot.write_image("{}/{}.png".format(path, file_name))
 
 #simulation setting
 one_sec = 1000.0
@@ -175,12 +180,15 @@ weights = [] #weights associated with outcome
 probabilities = [] #probabilities associated with outcome
     #interaction weights-connectivity
 set_weights = [1, 20, 40, 60, 80, 100]
-probs_at_1 = []
-probs_at_20 = []
-probs_at_40 = []
-probs_at_60 = []
-probs_at_80 = []
-probs_at_100 = []
+class Probs_at_w:
+    def __init__(self):
+        self.at_1 = []
+        self.at_20 = []
+        self.at_40 = []
+        self.at_60 = []
+        self.at_80 = []
+        self.at_100 = []
+probs = Probs_at_w()
 
 #data for the plot
 step_1 = []
@@ -214,8 +222,10 @@ step_3 = []
 #         input_curr, neuron_pop, spikeDet = create_network(w, p)
 #         nest.Simulate(time)
 #         multiple_nets(w) #y axis
-#     probabilities.append(p) #x axis
+#     probabilitie
+# s.append(p) #x axis
 #     p = .001 + p
+# plot_interaction(probs, probabilities, "Connection probability", "connectivityXweight", "params_interaction")
 
     #comparison plasticity & non
 for w in set_weights:
