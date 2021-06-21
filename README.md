@@ -76,5 +76,5 @@ Investigating further, I tried to plot the missing values (i.e. w belonging to [
 ![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/weight_33to63.png)  
 ![alt text](https://github.com/Igor10798/Internship/blob/master/first_network/weight_65to100.png)  
 ###### 21/06/2021 News
-Although I did some code refactoring, I couldn't find the error. While waiting, I added a function that gives to the neuron of the newtork the `STDP synapse model`, comparing the outputs from a non-plastic and from a plastic network for different weights.  
+Although I did some code refactoring, I couldn't find the error. While waiting, I added a function that gives to the neuron of the newtork the `STDP synapse model`, comparing the outputs from a non-plastic and from a plastic network for different weights. (https://github.com/Igor10798/Internship/tree/master/first_network/plasticity)  
 Unexpectedly, these plots don't differ at all. Maybe setting fixed weights force static connections in the network (with the given strenght). I will try to vary the connectivity instead, to check if I obtain different results.
