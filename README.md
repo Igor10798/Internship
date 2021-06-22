@@ -51,20 +51,20 @@ Now I am going to plot data in csv format and analize them with JASP && Rstudio.
 I had a first analysis of the data using RStudio. You can find the plot in the folder above, where I plotted the main diagnostic plots of the regression, and in a `.txt` file I gathered all R^2 values in order to assess whether a linear of logarithmic regression was better.  
 Here I am going to analyze only a dataset as an example.  
 In the case of `rheobase frequency`, the coefficient of determination was significantly higher in case of linear regression, so I analyzed deeper only that casistic (https://github.com/Igor10798/Internship/tree/master/stats/data/plot%20Rstudio/rheobase).  
-From the residuals graph we can see that residuals are not casually dinstributed, so a linear model may not fit very well this dinstribution, despine an high value of R^2.  
+From the residuals graph we can see that residuals are not casually dinstributed, so a linear model may not fit very well this dinstribution, despite a high value of R^2.  
 ![alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/rheobase/residual-fitted.png)  
 From the Scale-Location plot, we can check if the homoscedasticity assumption is violated, which seems to be the case of our model: the variance of population are not equal  
 ![alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/rheobase/std%20residual-fitted.png)  
 From the residuals-leverage plot, we can search for high Leverage points and for outliers. We may define an outlier a data whose std residual is 3 standard far from the mean, while we may define a leverage as the distance of the X value of an observation from the others. The former are data that are not in line with other observation (to check if there are some problems with the model), the latter are data that have a greater effects on determining the regression. We have to be careful and check what data are outlier and what are high leverage points, and what are both (i.e. `influence ponts`).  
 From the graph below we can see that there are no outliers nor high leverage points, since all points are far away from the Cook distance.  
-![alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/750Hz%20wls/scale-location.png)  
+![alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/rheobase/residual-leverage.png)  
 
 From this analysis we can conclude that there are not data to not consider in order to enhanche the predictive power of the model, but the distribution doesn't meet some assumption of linear regression (i.e. homoscedasticity and linearity), so the model clearly cannot fit the data. Maybe the use of a GLM could explain better these data.
 
 ###### 21/06/2021 Trying to fix heteroscedasticity
-I used `weighted least square regression` trying to fix heteroscedasticity while maintaining "simple" regression. Using weights (i.e. `lm(abs(model$residuals) ~ model$fitted.values)$fitted.values^2`) in order to make residuals more plain, I enhanced the coefficient of determination (from .8977 to .9378), and by using a non linear model (hence we previously found out that the linearity was missing) (i.e. `V1 ~ 1/V2 + log(V2)`) it becomes .962.  
+I used `weighted least square regression` trying to fix heteroscedasticity while maintaining "simple" regression. I'll bring here an example on the ○`750Hz input`. Using weights (i.e. `lm(abs(model$residuals) ~ model$fitted.values)$fitted.values^2`) in order to make residuals more plain, I enhanced the coefficient of determination (from .8977 to .9378), and by using a non linear model (hence we previously found out that the linearity was missing) (i.e. `V1 ~ 1/V2 + log(V2)`) it becomes .962.  
 Despite the enhancement of R^2, from the Scale-Location plot we can still notice a pattern composed by residuals, and performing a `var.test` will confirm the heteroscedasticity.  
-[!alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/rheobase/residual-leverage.png))
+[!There have been some problems! Click for the image](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/750Hz%20wls/scale-location.png)
 
 ### 16/06/2021 script.py (https://github.com/Igor10798/Internship/blob/master/first_network/script.py)
 I am going to investigate the importance of weight magnitude and number of random connection between neurons in a single population of LIF neuron, how they influence the output of the network (spikes/s) and how their relationship.  
