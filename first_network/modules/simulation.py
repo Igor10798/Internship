@@ -148,11 +148,11 @@ def label_net_stacked_area(spikeDet, param, dead, constant, exploded):
 
     #labelling the network in base of its growth
     if ratio == 0:
-        dead.append(param)
+        dead = np.append(dead, param)
     elif ratio < 2.0 and ratio > 0:
-        constant.append(param)
+        constant = np.append(constant, param)
     elif ratio >= 2.0:
-        exploded.append(param)
+        exploded = np.append(exploded, param)
     
     return dead, constant, exploded
 
