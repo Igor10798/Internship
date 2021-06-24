@@ -1,6 +1,7 @@
 import modules.simulation as sim
 import pickle
 from modules.models import LineForChart
+from modules.models import DataBackup
 import numpy as np
 import nest
 
@@ -19,17 +20,7 @@ data_chart = {
     "exploded": exploded_prop
 }
 
-class Data_backup:
-    def __init__(self):
-        self.dict = {
-            "dead": np.array([]),
-            "constant": np.array([]),
-            "exploded": np.array([]),
-            "time_dead": np.arange(1, sim.time + 1, dtype=int),
-            "time_constant": np.arange(1, sim.time + 1, dtype=int),
-            "time_exploded": np.arange(1, sim.time + 1, dtype=int)
-        }
-data_backup =  [Data_backup() for i in range(1, int(sim.time) + 1)]
+data_backup =  [DataBackup() for i in range(1, int(sim.time) + 1)]
 
 
 #variables for loops
