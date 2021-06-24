@@ -83,3 +83,17 @@ Investigating further, I tried to plot the missing values (i.e. w belonging to [
 ###### 21/06/2021 News
 Although I did some code refactoring, I couldn't find the error. While waiting, I added a function that gives to the neuron of the newtork the `STDP synapse model`, comparing the outputs from a non-plastic and from a plastic network for different weights. (https://github.com/Igor10798/Internship/tree/master/first_network/plasticity)  
 Unexpectedly, these plots don't differ at all. Maybe setting fixed weights force static connections in the network (with the given strenght). I will try to vary the connectivity instead, to check if I obtain different results.
+
+### 24/06/2021 Code refactoring of `first_network` (https://github.com/Igor10798/Internship/tree/master/first_network)
+###### Dir structure
+As suggested in issue #11, I simplified my code giving it a modular structure. It follows an explanation about how the folder is structured.  
+- `./collect_data.py` is the main script, where I use all the modules in order to run the simulation and store my data. (https://github.com/Igor10798/Internship/blob/master/first_network/collect_data.py)  
+- `./analysis.py` contains the script where I do my offline analysis (in this case just the plots) (https://github.com/Igor10798/Internship/blob/master/first_network/analysis.py)  
+- `./params_interaction` is the folder where my plots will be saved (https://github.com/Igor10798/Internship/tree/master/first_network/params_interaction)  
+- `./modules` is the folder where you can find my modules (`graph.py` for the charts, `simulation.py` with my simulations script and `models.py` for my object models) (https://github.com/Igor10798/Internship/tree/master/first_network/modules)  
+- `./offline_analysis` is the folder where I stored my pkl file (and maybe some Rstudio plot in the future) (https://github.com/Igor10798/Internship/tree/master/first_network/offline_analysis)
+
+###### Online analysis (https://github.com/Igor10798/Internship/blob/master/first_network/collect_data.py)
+I wrote a script that runs the simulation varying weights `w` and probability of connection `p`. For every value of `w` it runs a simulation per every value of `p`.  
+For every `w` I stored the maximum `p` value where my outcome was `dead_prop`, `constant_prop` or `exploded_prop`.  
+I planned, as suggested in #10, to plot every outcome in order to check if the storage of data for the main chart was correct. To do so, I created an object that collects all the outcomes (spikes/s) and their times, labelling them as `dead_prop`, `constant_prop` or `exploded_prop`. I create an istance of this object for every `p` value in every `w`.
