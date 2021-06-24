@@ -1,7 +1,6 @@
 import modules.simulation as sim
 import pickle
-from modules.models import LineForChart
-from modules.models import DataBackup
+import modules.models as md
 import numpy as np
 import nest
 
@@ -11,16 +10,16 @@ p_conn_constant = np.array([])
 p_conn_exploded = np.array([])
 
 #data to save
-dead_prop = LineForChart()
-constant_prop = LineForChart()
-exploded_prop = LineForChart()
+dead_prop = md.LineForChart()
+constant_prop = md.LineForChart()
+exploded_prop = md.LineForChart()
 data_chart = {
     "dead": dead_prop,
     "constant": constant_prop,
     "exploded": exploded_prop
 }
 
-data_backup =  [DataBackup() for i in range(1, int(sim.time) + 1)]
+data_backup =  [md.DataBackup() for i in range(1, int(sim.time) + 1)]
 
 
 #variables for loops
