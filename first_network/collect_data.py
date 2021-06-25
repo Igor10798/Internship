@@ -1,8 +1,9 @@
-import modules.simulation as sim
 import pickle
-import modules.models as md
 import numpy as np
 import nest
+
+import modules.simulation as sim
+import modules.models as md
 
 #array for online analysis
 p_conn_dead = np.array([])
@@ -19,12 +20,12 @@ data_chart = {
     "exploded": exploded_prop
 }
 
-data_backup =  [md.DataBackup() for i in range(1, int(sim.time) + 1)]
+data_backup =  [md.DataBackup(sim.time) for i in range(1, int(sim.time) + 1)]
 
 
 #variables for loops
-set_weights = np.arange(1, 81, 80)
-p_conn = np.arange(1, 121, 60)
+set_weights = np.arange(1, 81, 40)
+p_conn = np.arange(1, 121, 30)
 #collecting data
 for w in set_weights:
     w = float(w)
@@ -67,17 +68,6 @@ with open("{}chart.pkl".format(path), "wb") as f:
     data = data_chart
     pickle.dump(data, f)
 
-with open("{}backup.pkl".format(path), "wb") as b:
-    data = data_backup
-    pickle.dump(data, b)
-
-import modules.graphs as graph
-
-with open("offline_analysis/chart.pkl", "rb") as f:
-    data = pickle.load(f)
-
-with open("offline_analysis/chart.pkl", "rb") as f:
-    raw_data = pickle.load(f)
-
-graph.stacked_area(data["dead"], data["constant"], data["exploded"], "params_interaction/")
-graph.plot_raw(raw_data, "params_interaction/")
+# with open("{}backup.pkl".format(path), "wb") as b:
+#     data = data_backup
+#     pickle.dump(data, b)
