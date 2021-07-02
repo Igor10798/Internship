@@ -4,13 +4,7 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import numpy as np
 
-def create_network(weight = 1.0, p = .003, isPlastic = False, isFirst = True):
-    #network setting
-    n = 300 #neurons
-    #p = connection probability
-    n_excited = 20 #neuron excited by input
-    conn_dict = {"rule": "pairwise_bernoulli", "p": p}
-
+def initKernel():
     #neuron model
     params = {
         "t_ref": 1.59,
@@ -21,20 +15,25 @@ def create_network(weight = 1.0, p = .003, isPlastic = False, isFirst = True):
         "tau_syn_ex": 0.64,
         "tau_syn_in": 2.0
     }
-    if isFirst:
-        nest.CopyModel("aeif_cond_alpha", "leaky_i_f", params=params)
+
+    nest.CopyModel("aeif_cond_alpha", "leaky_i_f", params=params)
+
+def create_network(weight = 1.0, p = .003, isPlastic = False, n=300, n_excited=20):
+    #network setting
+    #p = connection probability
+    bernoulli_prob = {"rule": "pairwise_bernoulli", "p": p}
 
     #input
     input_dict = {"rate": 300.0, "stop": one_sec}
-    input_conn = {"rule": "fixed_total_number", "N": n_excited}
+    fixed_input_number = {"rule": "fixed_total_number", "N": n_excited}
     syn_conn = { "weight" : weight, "model": "stdp_synapse" } if isPlastic else { "weight": weight }
 
     #building network
     input_curr = nest.Create("poisson_generator", params = input_dict)
     neuron_pop = nest.Create("leaky_i_f", n)
 
-    nest.Connect(input_curr, neuron_pop, input_conn) #input
-    nest.Connect(neuron_pop, neuron_pop, conn_dict, syn_conn) #inter-network connections
+    nest.Connect(input_curr, neuron_pop, fixed_input_number) #input
+    nest.Connect(neuron_pop, neuron_pop, bernoulli_prob, syn_conn) #inter-network connections
     #recording
     spikeDet = nest.Create("spike_detector", params = {"withgid": True, "withtime": True})
     nest.Connect(neuron_pop, spikeDet)
@@ -47,6 +46,11 @@ def record_vars(spikeDet):
     spike_freq = np.array(spikes * one_sec / time)
     t = np.array(var[0]["times"])
     return spike_freq, t
+
+def extract_spikes(spikeDet):
+    #recording vars
+    var = nest.GetStatus(spikeDet, keys = "events")
+    return np.column_stack(tuple(var[0].get(key) for key in ("senders", "times")))
 
 def label_network(spikeDet, var, dead_sig = None, step_one = None, const_sign = None, step_two = None, exp_sign = None, step_three = None):
     #modifying global vars if customized are not inserted

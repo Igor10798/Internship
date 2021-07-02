@@ -1,9 +1,8 @@
 class  LineForChart:
-    def __init__(self):
-        self.x = []
-        self.y = []
+    def __init__(self, x_axis = [], y_axis = []):
+        self.x = x_axis
+        self.y = y_axis
         
-import numpy as np
 class DataBackup:
     def __init__(self, time):
         self.dict = {
