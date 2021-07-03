@@ -51,7 +51,7 @@ Now I am going to plot data in csv format and analize them with JASP && Rstudio.
 I had a first analysis of the data using RStudio. You can find the plot in the folder above, where I plotted the main diagnostic plots of the regression, and in a `.txt` file I gathered all R^2 values in order to assess whether a linear of logarithmic regression was better.  
 Here I am going to analyze only a dataset as an example.  
 In the case of `rheobase frequency`, the coefficient of determination was significantly higher in case of linear regression, so I analyzed deeper only that casistic (https://github.com/Igor10798/Internship/tree/master/stats/data/plot%20Rstudio/rheobase).  
-From the residuals graph we can see that residuals are not casually dinstributed, so a linear model may not fit very well this dinstribution, despite a high value of R^2.  
+From the residuals graph we can see that residuals are not randomly dinstributed, so a linear model may not fit very well this dinstribution, despite a high value of R^2.  
 ![alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/rheobase/residual-fitted.png)  
 From the Scale-Location plot, we can check if the homoscedasticity assumption is violated, which seems to be the case of our model: the variance of population are not equal  
 ![alt text](https://github.com/Igor10798/Internship/blob/master/stats/data/plot%20Rstudio/rheobase/std%20residual-fitted.png)  
@@ -97,3 +97,7 @@ As suggested in issue #11, I simplified my code giving it a modular structure. I
 I wrote a script that runs the simulation varying weights `w` and probability of connection `p`. For every value of `w` it runs a simulation per every value of `p`.  
 For every `w` I stored the maximum `p` value where my outcome was `dead_prop`, `constant_prop` or `exploded_prop`.  
 I planned, as suggested in #10, to plot every outcome in order to check if the storage of data for the main chart was correct. To do so, I created an object that collects all the outcomes (spikes/s) and their times, labelling them as `dead_prop`, `constant_prop` or `exploded_prop`. I create an istance of this object for every `p` value in every `w`.
+
+### 02/07/2021
+After the work in the lab I updated `g_L in aeif_cond_alpha model` (https://github.com/Igor10798/Internship/blob/master/g_L_investigation/g_L_in_aeif_cond_alpha_CORRECTED.docx) with statistical analysis I showed (here in https://github.com/Igor10798/Internship#14062021-statspy-httpsgithubcomigor10798internshipblob7057349e4946615abed763c4e6dbf7e429addf64statspyl35-l43).  
+I completed the offline analysis in the `first_network` directory: I exported the raw data (spikes/s, weight and probability of connection) for further analysis with RStudio in order to determine the relationship. I plotted a stacked area graph where the interaction is qualitatively evident.
