@@ -101,3 +101,8 @@ I planned, as suggested in #10, to plot every outcome in order to check if the s
 ### 02/07/2021
 After the work in the lab I updated `g_L in aeif_cond_alpha model` (https://github.com/Igor10798/Internship/blob/master/g_L_investigation/g_L_in_aeif_cond_alpha_CORRECTED.docx) with statistical analysis I showed (here in https://github.com/Igor10798/Internship#14062021-statspy-httpsgithubcomigor10798internshipblob7057349e4946615abed763c4e6dbf7e429addf64statspyl35-l43).  
 I completed the offline analysis in the `first_network` directory: I exported the raw data (spikes/s, weight and probability of connection) for further analysis with RStudio in order to determine the relationship. I plotted a stacked area graph where the interaction is qualitatively evident.
+
+### 05/07/2021
+I started analyzing data on RStudio (https://github.com/Igor10798/Internship/blob/master/first_network\offline_analysis\plot_rstudio\first_set_params).  
+I unfortunately found that starting from the first values of my set of `weights`, for every `p` value of connectivity, the output of the network reaches very high values and stabilizes itself.  
+My interpretation is that the sets of weights and connectivity I used (https://github.com/Igor10798/Internship/blob/ee54029711086ce6ced0509ce9961212c206f504/first_network/collect_data.py#L25-L27) were too big, the signal exploded and reached the maximum output obtainable (i.e. every neuron connected fires). Since this extreme condition won't give information about the relationship between `w`, `p` and the output, I will make other simulations with different sets of parameters.

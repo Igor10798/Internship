@@ -23,8 +23,8 @@ data_chart = {
 data_backup =  md.LineForChart()
 
 #variables for loops
-set_weights = np.logspace(0, 8, 15, base = 2.0)
-p_conn = np.linspace(0, .5, 5)
+set_weights = np.logspace(0, 7, 8, base = 2.0)
+p_conn = np.linspace(.03, 1.5, 8)
 path = "offline_analysis/sim_pkl/"
 
 def main():
