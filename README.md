@@ -99,7 +99,7 @@ For every `w` I stored the maximum `p` value where my outcome was `dead_prop`, `
 I planned, as suggested in #10, to plot every outcome in order to check if the storage of data for the main chart was correct. To do so, I created an object that collects all the outcomes (spikes/s) and their times, labelling them as `dead_prop`, `constant_prop` or `exploded_prop`. I create an istance of this object for every `p` value in every `w`.
 
 ### 02/07/2021
-After the work in the lab I updated `g_L in aeif_cond_alpha model` (https://github.com/Igor10798/Internship/blob/master/g_L_investigation/g_L_in_aeif_cond_alpha_CORRECTED.docx) with statistical analysis I showed (here in https://github.com/Igor10798/Internship#14062021-statspy-httpsgithubcomigor10798internshipblob7057349e4946615abed763c4e6dbf7e429addf64statspyl35-l43).  
+After the work in the lab I updated `g_L in aeif_cond_alpha model` (i.e. `set_weights = np.logspace(0, 8, 15, base = 2.0)`, `p_conn = np.linspace(0, .5, 5)` https://github.com/Igor10798/Internship/blob/master/g_L_investigation/g_L_in_aeif_cond_alpha_CORRECTED.docx) with statistical analysis I showed (here in https://github.com/Igor10798/Internship#14062021-statspy-httpsgithubcomigor10798internshipblob7057349e4946615abed763c4e6dbf7e429addf64statspyl35-l43).  
 I completed the offline analysis in the `first_network` directory: I exported the raw data (spikes/s, weight and probability of connection) for further analysis with RStudio in order to determine the relationship. I plotted a stacked area graph where the interaction is qualitatively evident.
 
 ### 05/07/2021

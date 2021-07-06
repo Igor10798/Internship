@@ -106,5 +106,5 @@ e_sig = LineForChart(exploded_signal[:,0], exploded_signal[:,1])
 
 #stacked graph
 fig_2 = graph.stacked_area(d_sig, c_sig, e_sig)
-fig_2.write_image('params_interaction/stacked.png')
-fig_2.write_html('params_interaction/stacked.html')
+fig_2.write_image('offline_analysis/params_interaction/stacked.png')
+fig_2.write_html('offline_analysis/params_interaction/stacked.html')
