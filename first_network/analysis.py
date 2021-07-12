@@ -3,31 +3,29 @@ import numpy as np
 import modules.graphs as graph
 from collect_data import set_weights
 from collect_data import p_conn
-from modules.simulation import time
 from glob import glob
 from modules.models import LineForChart
 
-def graph_raw():
-    time_bin_width = 5
-    for pkl_path in glob("offline_analysis/sim_pkl/*.pkl"):
-        print("Analyzing", pkl_path)
-        with open(pkl_path, "rb") as f:
-            w, p, spike_matrix = pickle.load(f)
-        time = spike_matrix[:,1]
-        time_bin = int(( np.amax(time) - np.amin(time) )/ time_bin_width)
-        sig_time, histo_edges = np.histogram(time, time_bin, density = True)
-        fig = graph.raw_histogram(histo_edges, sig_time)
-        #printing for check
-        if pkl_path == "offline_analysis/sim_pkl/7_7.pkl":
-            np.savetxt('offline_analysis/data/7_7.csv', spike_matrix)
-            print(histo_edges, sig_time)
-        elif pkl_path == "offline_analysis/sim_pkl/1_3.pkl":
-            np.savetxt('offline_analysis/data/1_3.csv', spike_matrix)
-        elif pkl_path == "offline_analysis/sim_pkl/4_4.pkl":
-            np.savetxt('offline_analysis/data/4_4.csv', spike_matrix)
-        fig.write_image(f'{pkl_path}_raw.png')
+# time_bin_width = 5
+# for pkl_path in glob("offline_analysis/sim_pkl/*.pkl"):
+#     print("Analyzing", pkl_path)
+#     with open(pkl_path, "rb") as f:
+#         w, p, spike_matrix = pickle.load(f)
+#     time = spike_matrix[:,1]
+#     time_bin = int(( np.amax(time) - np.amin(time) )/ time_bin_width)
+#     sig_time, histo_edges = np.histogram(time, time_bin, density = True)
+#     fig = graph.raw_histogram(histo_edges, sig_time)
+#     #printing for check
+#     if pkl_path == "offline_analysis/sim_pkl/7_7.pkl":
+#         np.savetxt('offline_analysis/data/7_7.csv', spike_matrix)
+#         print(histo_edges, sig_time)
+#     elif pkl_path == "offline_analysis/sim_pkl/1_3.pkl":
+#         np.savetxt('offline_analysis/data/1_3.csv', spike_matrix)
+#     elif pkl_path == "offline_analysis/sim_pkl/4_4.pkl":
+#         np.savetxt('offline_analysis/data/4_4.csv', spike_matrix)
+#     fig.write_image(f'{pkl_path}_raw.png')
 
-#graph_raw()
+time = 11 * 1000.0
 
 n_pkl = len(glob("offline_analysis/sim_pkl/*.pkl"))
 label_net = np.zeros(n_pkl)
@@ -47,11 +45,11 @@ for i, pkl_path in enumerate(glob("offline_analysis/sim_pkl/*.pkl")):
     with open(pkl_path, "rb") as f:
         w, p, spike_matrix = pickle.load(f)
     spike_t = spike_matrix[:,1]
-    spike_freq = spike_matrix[:,0].size / time
+    spike_freq = spike_matrix[:,0]
     #arrays to update and will be pushed in np.savetext
     w_list[i] = w
     p_list[i] = p
-    freq_list[i] = spike_freq.size
+    freq_list[i] = spike_freq.size / time
 
     #masking for labelling network (dead, constant, exploded)
     mask_10s = (10 * 1000) < spike_t
